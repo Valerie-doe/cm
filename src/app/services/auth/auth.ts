@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = environment.apiBaseUrl + 'api/auth/login';
+  private baseUrl = 'https://centrecom.up.railway.app/api/auth/login';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -16,7 +15,8 @@ export class AuthService {
     return this.http.post<any>(this.baseUrl, { email, password }).pipe(
       tap(res => {
         if (res.token && typeof window !== 'undefined') {
-          localStorage.setItem('token', res.token); // stocke le token
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('shopId', res.boutiqueId);
         }
       })
     );
