@@ -1,0 +1,49 @@
+<div class="login-container">
+  <h2>S'inscrire</h2>
+
+  <form (ngSubmit)="register()">
+<input
+  type="text"
+  [(ngModel)]="name"
+  name="name"
+  placeholder="Nom"
+  required
+/>
+    <input
+      type="email"
+      [(ngModel)]="email"
+      name="email"
+      placeholder="Email"
+      required
+    />
+
+    <input
+      type="text"
+      [(ngModel)]="password"
+      name="password"
+      placeholder="Mot de passe"
+      required
+    />
+
+    <input
+      type="text"
+      [(ngModel)]="phone"
+      name="phone"
+      placeholder="Téléphone"
+      required
+    />
+
+    <input
+      type="text"
+      [(ngModel)]="address"
+      name="address"
+      placeholder="Adresse"
+      required
+    />
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Inscription...' : "S'inscrire" }}
+    </button>
+
+  </form>
+</div>

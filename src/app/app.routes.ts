@@ -20,10 +20,17 @@ import { Boutique } from './pages/boutique/boutique';
 import { AddBoutique } from './pages/boutique/add-boutique/add-boutique';
 import { Contrats } from './pages/contrats/contrats';
 import { AddContrat } from './pages/contrats/add-contrat/add-contrat';
+import { LoginClient } from './pages/login-client/login-client';
+import { Register } from './pages/register/register';
+import { DashboardComponent } from './pages/dashboardAdmin/dashboard';
+import { PaiementFactureComponent } from './pages/paiement-facture/paiement-facture';
+import { GenerateFacture } from './pages/facture/facture';
+import { AuthGuard } from './auth-guard';
 
 export const routes: Routes = [
-    {path : 'shop-list', component : ShopList},
+    {path : 'client', component : ShopList},
     {path: 'login',component: LoginBoutique},
+    {path: 'auth',component: LoginClient},
     {path : 'products-boutiques', component : ShopProducts},
     {path : 'create-products', component : ShopProductCreate},
     {path : 'purchase', component : PurchaseFormComponent},
@@ -37,16 +44,18 @@ export const routes: Routes = [
     {path : 'boutique/main', component : BoutiqueMain},
     {path : 'customer-order', component : CustomerOrders},
     { path: '', redirectTo: 'login', pathMatch: 'full' },
-    {path : 'lots', component : Lots},
-    {path : 'admin', component : Lots},
-    {path : 'client', component : Lots},
-    {path : 'lots/add', component : AddLot},
-    {path: 'lots/add/:id',component: AddLot}, 
-    {path : 'boutiques', component : Boutique},
-    {path : 'boutique/add', component : AddBoutique},
-    {path: 'boutique/add/:id',component: AddBoutique},  
-    {path : 'contrats', component : Contrats},
-    {path : 'contrats/add', component : AddContrat},
-    {path: 'contrats/add/:id',component: AddContrat}
+    {path : 'lots', component : Lots,canActivate: [AuthGuard]},
+    {path : 'lots/add', component : AddLot,canActivate: [AuthGuard]},
+    {path: 'lots/add/:id',component: AddLot,canActivate: [AuthGuard]}, 
+    {path : 'boutiques', component : Boutique,canActivate: [AuthGuard]},
+    {path : 'boutique/add', component : AddBoutique,canActivate: [AuthGuard]},
+    {path: 'boutique/add/:id',component: AddBoutique,canActivate: [AuthGuard]},  
+    {path : 'contrats', component : Contrats,canActivate: [AuthGuard]},
+    {path : 'contrats/add', component : AddContrat,canActivate: [AuthGuard]},
+    {path: 'contrats/add/:id',component: AddContrat,canActivate: [AuthGuard]},
+    {path: 'register',component: Register},
+    {path: 'facture',component: GenerateFacture,canActivate: [AuthGuard]},
+    {path: 'paiement',component: PaiementFactureComponent,canActivate: [AuthGuard]},
+    {path: 'dashboardAdmin',component: DashboardComponent,canActivate: [AuthGuard]}
 
   ];

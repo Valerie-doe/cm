@@ -7,6 +7,7 @@
       type="email"
       [(ngModel)]="email"
       name="email"
+      placeholder="Email"
       required
     />
 
@@ -14,6 +15,7 @@
       type="password"
       [(ngModel)]="password"
       name="password"
+      placeholder="Mot de passe"
       required
     />
 
@@ -22,4 +24,10 @@
     </button>
 
   </form>
+
+  <!-- Petit lien s'inscrire -->
+  <p class="register-link">
+    Pas encore de compte ? 
+    <a href="#" (click)="goToRegister(); $event.preventDefault()">S'inscrire</a>
+  </p>
 </div>

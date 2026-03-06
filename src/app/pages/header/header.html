@@ -5,16 +5,23 @@
       <span>Centre Commercial</span>
     </a>
     <nav>
-      <ul class="nav-menu">
-        <li><a href="dashboard.html">Tableau de bord</a></li>
-        <li><a href="/boutiques">Boutiques</a></li>
-        <li><a href="/lots" class="active">Lots</a></li>
-        <li><a href="/contrats">Contrats</a></li>
-        <li><a href="payments.html">Paiements</a></li>
-      </ul>
+      <nav>
+  <ul class="nav-menu">
+    <li><a [routerLink]="['/dashboardAdmin']">Tableau de bord</a></li>
+    <li><a [routerLink]="['/boutiques']">Boutiques</a></li>
+    <li><a [routerLink]="['/lots']" class="active">Lots</a></li>
+    <li><a [routerLink]="['/contrats']">Contrats</a></li>
+    <li><a [routerLink]="['/facture']">Facture</a></li>
+    <li><a [routerLink]="['/paiement']">Paiements</a></li>
+  </ul>
+</nav>
     </nav>
+    
+
     <div class="user-section">
       <div class="user-avatar">AD</div>
+      <!-- Bouton Déconnexion -->
+      <button class="logout-btn" (click)="logout()">Déconnexion</button>
     </div>
   </div>
 </header>

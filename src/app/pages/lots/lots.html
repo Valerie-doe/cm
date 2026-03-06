@@ -36,9 +36,9 @@
           (input)="onSearch()"
         >
       </div>
-      <div class="flex gap-2">
-        <a href="/lots/add" class="btn btn-primary">➕ Ajouter un lot</a>
-      </div>
+      <a [routerLink]="['/lots/add']" class="btn btn-primary">
+➕ Ajouter un lot
+</a>
     </div>
   </div>
 
@@ -56,7 +56,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let lot of filteredLots">
+          <tr *ngFor="let lot of filteredLots; trackBy: trackById">
           <td><strong>{{ lot.numero }}</strong></td>
           <td>{{ lot.zone }}</td>
           <td>{{ lot.surface }} m²</td>

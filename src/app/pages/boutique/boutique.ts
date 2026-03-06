@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Header } from '../header/header';
-import { ChangeDetectorRef } from '@angular/core';
 
 export interface Responsable {
   nom: string;
@@ -16,10 +15,12 @@ export interface Responsable {
 
 export interface Boutique {
   _id?: string;
-  nom: string;
+  name: string;
   email: string;
-  categorie: { _id: string; name: string };
-  responsable: Responsable;
+  website: string;
+  phone: string;
+  description: string;
+  categoryId: { _id: string; name: string };
 }
 
 @Component({
@@ -35,9 +36,7 @@ export class Boutique implements OnInit {
   filteredBoutiques: Boutique[] = [];
   searchTerm: string = '';
 
-  constructor(private api: ApiService, private router: Router,    
-     private cdr: ChangeDetectorRef
-) {}
+  constructor(private api: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadBoutiques();
@@ -48,7 +47,6 @@ export class Boutique implements OnInit {
       next: data => {
         this.boutiques = data;
         this.filteredBoutiques = data;
-        this.cdr.detectChanges();
       },
       error: err => console.error('Erreur lors du chargement des boutiques', err)
     });
@@ -60,7 +58,7 @@ export class Boutique implements OnInit {
       this.filteredBoutiques = this.boutiques;
     } else {
       this.filteredBoutiques = this.boutiques.filter(b =>
-        b.nom.toLowerCase().includes(term) || b.email.toLowerCase().includes(term)
+        b.name.toLowerCase().includes(term) || b.email.toLowerCase().includes(term)
       );
     }
   }

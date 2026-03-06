@@ -13,8 +13,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginBoutique {
 
-  email: string = 'techstorecT@gmail.com';
-  password: string = '2a2abc52';
+  email: string = 'boutique@gmail.com';
+  password: string = '7f227a30';
   loading: boolean = false;
 
   constructor(
@@ -48,11 +48,10 @@ login() {
 
         this.loading = false;
         console.log('🔹 loader désactivé, navigation vers /boutique/main');
-     // Redirection selon rôle
-          let redirectUrl = '/';
+  let redirectUrl = '/';
           switch (res.role.toLowerCase()) {
             case 'admin':
-              redirectUrl = '/admin';
+              redirectUrl = '/lots';
               break;
             case 'boutique':
               redirectUrl = '/boutique/main';
@@ -69,6 +68,7 @@ login() {
           this.router.navigate([redirectUrl]).then(() => {
             console.log(`🔹 Navigation terminée vers ${redirectUrl}`);
           });
+     
       },
 
       error: (err) => {

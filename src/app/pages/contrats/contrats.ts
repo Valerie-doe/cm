@@ -6,11 +6,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Header } from '../header/header';
-import { ChangeDetectorRef } from '@angular/core';
-
 export interface Contrat {
   _id?: string;
-  boutiqueId: string | { _id: string; nom: string };
+  boutiqueId: string | { _id: string; name: string };
   lotId: string | { _id: string; numero: string; prix?: number };
 
   dateDebut: string;
@@ -38,7 +36,7 @@ filterLot: string = '';
 filterDateDebut: string = '';
 filterDateFin: string = '';
 filterStatut: string = '';
-  constructor(private api: ApiService, private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(private api: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadContrats();
@@ -52,7 +50,7 @@ filterStatut: string = '';
       },
       error: err => console.error('Erreur chargement contrats', err)
     });
-    this.cdr.detectChanges();
+    console.log(this.contrats);
 
   }
 
@@ -66,7 +64,7 @@ applyFilters(): void {
     // Filtre boutique
     const boutiqueMatch =
       !this.filterBoutique ||
-      (c.boutiqueId && typeof c.boutiqueId !== 'string' && c.boutiqueId.nom.toLowerCase().includes(this.filterBoutique.toLowerCase()));
+      (c.boutiqueId && typeof c.boutiqueId !== 'string' && c.boutiqueId.name.toLowerCase().includes(this.filterBoutique.toLowerCase()));
 
     // Filtre lot
     const lotMatch =
@@ -96,7 +94,7 @@ onSearch(): void {
     this.filteredContrats = this.contrats;
   } else {
     this.filteredContrats = this.contrats.filter(c => 
-      (typeof c.boutiqueId !== 'string' && c.boutiqueId?.nom.toLowerCase().includes(term)) ||
+      (typeof c.boutiqueId !== 'string' && c.boutiqueId?.name.toLowerCase().includes(term)) ||
       (typeof c.lotId !== 'string' && c.lotId?.numero.toLowerCase().includes(term))
     );
   }

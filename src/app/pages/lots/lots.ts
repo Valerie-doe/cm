@@ -4,7 +4,7 @@ import { ApiEndpoints } from '../../shared/constants/api-endpoints';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Header } from "../header/header";
 import { ChangeDetectorRef } from '@angular/core';
 
@@ -20,70 +20,121 @@ export interface Lot {
 @Component({
   selector: 'app-lots',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, Header],
+  imports: [
+    CommonModule,
+    FormsModule,
+    HttpClientModule,
+    RouterModule,
+    Header
+  ],
   templateUrl: './lots.html',
   styleUrls: ['./lots.css']
 })
 export class Lots implements OnInit {
 
-  lots: Lot[] = [];           // tous les lots
-  filteredLots: Lot[] = [];   // lots filtrés pour la recherche
-  searchTerm: string = '';    // terme de recherche
+  lots: any[] = [];
+  filteredLots: any[] = [];
+ articles: any[] = [];
+
+  searchTerm: string = '';
 
   totalLots = 0;
   availableLots = 0;
   occupiedLots = 0;
 
-  constructor(private apiService: ApiService,
-     private router: Router,
-     private cdr: ChangeDetectorRef
-  ) { }
+
+  constructor(
+    private apiService: ApiService,
+    private router: Router
+
+  ) {}
 
   ngOnInit(): void {
     this.loadLots();
+    this.loadArticles();
   }
-goToEditLot(lotId: string) {
-  this.router.navigate(['/lots/add', lotId]);
-}
+ loadArticles(): void {
+ this.apiService.getArticles().subscribe(data => this.articles =
+data);
+ }
+
+  // Charger les lots
   loadLots(): void {
+
     this.apiService.getList<Lot[]>(ApiEndpoints.LOTS.GETALL).subscribe({
       next: (data) => {
-        this.lots = data;
-        console.log(this.lots);
-        this.filteredLots = data; // initialement tout afficher
+
+        this.lots = data || [];
+        this.filteredLots = [...this.lots];
+        console.log("Lots reçus :", this.filteredLots);
+
         this.calculateStats();
-         this.cdr.detectChanges();
+
       },
-      error: (err) => console.error('Erreur lors du chargement des lots :', err)
+      error: (err) => {
+        console.error('Erreur lors du chargement des lots :', err);
+      }
     });
   }
 
-  // 🔹 Calcul des stats
+  // Calcul des statistiques
   calculateStats(): void {
     this.totalLots = this.lots.length;
-    this.availableLots = this.lots.filter(l => l.statut === 'LIBRE').length;
-    this.occupiedLots = this.lots.filter(l => l.statut === 'OCCUPE').length;
+
+    this.availableLots = this.lots.filter(
+      lot => lot.statut === 'LIBRE'
+    ).length;
+
+    this.occupiedLots = this.lots.filter(
+      lot => lot.statut === 'OCCUPE'
+    ).length;
   }
 
+  // Recherche
   onSearch(): void {
+
     const term = this.searchTerm.trim().toLowerCase();
+
     if (!term) {
-      this.filteredLots = this.lots;
-    } else {
-      this.filteredLots = this.lots.filter(l => l.numero.toLowerCase().includes(term));
+      this.filteredLots = [...this.lots];
+      return;
     }
+
+    this.filteredLots = this.lots.filter(lot =>
+      lot.numero.toLowerCase().includes(term)
+    );
   }
 
+  // Aller modifier lot
+  goToEditLot(lotId: string) {
+    this.router.navigate(['/lots/add', lotId]);
+  }
+
+  // Supprimer
   deleteLot(id: string): void {
-    if (confirm("Voulez-vous vraiment supprimer ce lot ?")) {
-      this.apiService.delete(`${ApiEndpoints.LOTS.GETALL}`, id).subscribe({
-        next: () => {
-          alert("Lot supprimé !");
-          this.loadLots();
-        },
-        error: (err) => console.error('Erreur lors de la suppression :', err)
-      });
-    }
+
+    const confirmDelete = confirm("Voulez-vous vraiment supprimer ce lot ?");
+    if (!confirmDelete) return;
+
+    this.apiService.delete(`${ApiEndpoints.LOTS.GETALL}`, id).subscribe({
+      next: () => {
+
+        alert("Lot supprimé avec succès");
+
+        // Recharge la liste
+        this.loadLots();
+
+      },
+      error: (err) => {
+        console.error('Erreur lors de la suppression :', err);
+      }
+    });
+
+  }
+
+  // Optimisation Angular
+  trackById(index: number, lot: Lot) {
+    return lot._id;
   }
 
 }

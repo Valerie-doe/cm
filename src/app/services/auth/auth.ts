@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private baseUrl = 'https://centrecom.up.railway.app/api/auth/login';
+  private baseUrlCustomer = 'https://centrecom.up.railway.app/api/auth/loginClient';
+  private url = 'https://centrecom.up.railway.app/api/auth/registerClient';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -17,9 +20,34 @@ export class AuthService {
         if (res.token && typeof window !== 'undefined') {
           localStorage.setItem('token', res.token);
           localStorage.setItem('shopId', res.boutiqueId);
+          localStorage.setItem('userId', res._id);
         }
       })
     );
+  }
+isAuthenticated(): boolean {
+
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const userId = localStorage.getItem('userId');
+  console.log("userId:", userId);
+
+  return !!userId;
+}
+  loginCustomer(email: string, password: string) {
+    return this.http.post<any>(this.baseUrlCustomer, { email, password }).pipe(
+      tap(res => {
+        if (res.token && typeof window !== 'undefined') {
+          localStorage.setItem('tokenCustomer', res.token);
+          localStorage.setItem('customerId', res.userId);
+        }
+      })
+    );
+  }
+registerClient(payload: any): Observable<any> {
+    return this.http.post(`${this.url}`, payload);
   }
 
  getToken(): string {

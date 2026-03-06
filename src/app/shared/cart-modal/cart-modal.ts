@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../services/cart/cart';
 import { CartProduct } from '../../models/cart';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cart-modal',
@@ -13,17 +13,17 @@ import { CartProduct } from '../../models/cart';
 })
 export class CartModalComponent {
 
-  @Input() clientId!: string;
+  clientId = this.getCustomerId();
 
   isOpen = false;
   carts: any[] = [];
   loading = false;
   totalItems = 0;
+showAuthModal = false;
 
-  constructor(private cartService: CartService, private cdr: ChangeDetectorRef) {}
-
+  constructor(private cartService: CartService, private cdr: ChangeDetectorRef,  private router: Router
+) {}
   open() {
-    if (!this.clientId) return;
     this.isOpen = true;
     this.loadCart();
   }
@@ -32,10 +32,20 @@ export class CartModalComponent {
     this.isOpen = false;
   }
 
+getCustomerId(): string | null {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('customerId');
+  }
+  return null;
+}
 loadCart() {
     console.log(`Début du chargement du panier pour clientId: ${this.clientId}`);
     this.loading = true;
-
+if (!this.clientId) {
+    console.log('Aucun client connecté');
+    this.showAuthModal = true;
+    return;
+  }
     this.cartService.getCart(this.clientId).subscribe({
       next: (res) => {
         console.log('✅ Réponse reçue du service:', res);
@@ -47,9 +57,6 @@ loadCart() {
         console.log('etat du loading après mise à jour:', this.loading);
         console.log('⏹️ Fin du chargement (succès)');
         console.log('🛒 Panier mis à jour:', this.carts);
-        this.carts.forEach(cart => console.log('Products:', cart.products));
-                this.cdr.detectChanges();
-
       },
       error: (err) => {
         console.error(err);
@@ -90,21 +97,24 @@ updateTotalItems() {
     });
   }
 
- checkoutCart(cartId: string) {
-    if (!confirm('Voulez-vous vraiment passer la commande pour ce panier ?')) return;
 
-    this.loading = true;
-    this.cartService.checkoutCart(cartId).subscribe({
-      next: (res) => {
-        alert('Commande passée avec succès !');
-        this.loadCart(); // recharge le panier pour afficher vide
-      },
-      error: (err) => {
-        alert('Erreur lors du passage de la commande : ' + err.error?.error || err.message);
-        this.loading = false;
-      }
-    });
-  }
+checkoutCart(cartId: string) {
 
+  if (!confirm('Voulez-vous vraiment passer la commande pour ce panier ?')) return;
+
+  this.loading = true;
+  this.cartService.checkoutCart(cartId).subscribe({
+    next: (res) => {
+      alert('Commande passée avec succès !');
+      this.loadCart();
+    },
+    error: (err) => {
+      alert('Erreur lors du passage de la commande : ' + 
+        (err.error?.error || err.message)
+      );
+      this.loading = false;
+    }
+  });
+}
 
 }

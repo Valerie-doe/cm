@@ -1,3 +1,17 @@
+<!-- Modal -->
+<div class="modal-backdrop" *ngIf="showAuthModal">
+  <div class="modal-box">
+    <h3>Connexion requise</h3>
+    <p>Vous devez être connecté pour passer la commande.</p>
+
+    <div class="modal-actions">
+      <button (click)="goToLogin()">Se connecter</button>
+      <button (click)="goToRegister()">S'inscrire</button>
+      <button (click)="showAuthModal = false">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <button
   class="btn-cart"
   (click)="add()"
